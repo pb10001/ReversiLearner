@@ -13,11 +13,16 @@ namespace ReversiLearner
         {
 
         }
-        public Learn(string path)
+        public Learn(int match, int width, string path)
         {
+            Count = match;
+            MutationWidth = width;
             var array = File.ReadAllText(path).Replace("\r", "").Split('\n').ToArray();
             ParamList.AddRange(array);
         }
+        public int MutationWidth { get; }
+        public int MatchNum { get; }
+        public int Count{ get; }
         public List<string> ParamList { get; } = new List<string>();
         List<Score> elites= new List<Score>();
         public void InitParams()
@@ -33,18 +38,18 @@ namespace ReversiLearner
                 ParamList.Add(string.Join(",", list));
             }
         }
-        public async Task<List<Score>> EvaluateParams(int count)
+        public async Task<List<Score>> EvaluateParams()
         {
             return await Task.Run(async () =>
             {
                 var res = new List<Score>();
+
                 foreach (var param in ParamList)
                 {
-                    res.Add(await MatchWithRandomEngine(count,param));
+                    res.Add(await MatchWithRandomEngine(param));
                 }
                 return res;
             });
-            
         }
 
         /// <summary>
@@ -53,7 +58,7 @@ namespace ReversiLearner
         /// <returns></returns>
         public async Task<string> FitParams()
         {
-            var res = await EvaluateParams(50);
+            var res = await EvaluateParams();
             elites = res.OrderBy(x => x.Loses).Take(4).ToList();
             ParamList.Clear();
 
@@ -105,7 +110,7 @@ namespace ReversiLearner
             var list2 = new List<int>();
             for (int j = 0; j < 16; j++)
             {
-                list2.Add(random1.Next(-10, 10));
+                list2.Add(random1.Next(-MutationWidth, MutationWidth));
             }
             var res = Enumerable.Zip(list1, list2, (x, y) => 
             {
@@ -155,7 +160,7 @@ namespace ReversiLearner
         /// </summary>
         /// <param name="paramsString"></param>
         /// <returns></returns>
-        private async Task<Score> MatchWithRandomEngine(int count,string paramsString)
+        private async Task<Score> MatchWithRandomEngine(string paramsString)
         {
             Console.WriteLine("{0}", paramsString);
             return await Task.Run(() =>
@@ -164,7 +169,7 @@ namespace ReversiLearner
                 var senteLose = 0;
                 var senteDraw = 0;
                 var senteList = new List<Match>();
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < Count; i++)
                 {
                     var match = new Match(paramsString);
                     match.SenteThinking();
@@ -195,7 +200,7 @@ namespace ReversiLearner
                 var goteLose = 0;
                 var goteDraw = 0;
                 var goteList = new List<Match>();
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < Count; i++)
                 {
                     var match = new Match(paramsString);
                     match.GoteThinking();
