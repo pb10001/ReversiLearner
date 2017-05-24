@@ -17,7 +17,7 @@ namespace ReversiLearner
             for (int i = 0; i < 10; i++)
             {
                 var text  = learner.FitParams().Result;
-                Console.WriteLine(i.ToString() + " epoc::" + text);
+                Console.WriteLine("epoc "+i.ToString() + "::" + text);
             }
             File.WriteAllText(@"ParamsData.txt", string.Join("\r\n", learner.ParamList));
         }
