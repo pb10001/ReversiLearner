@@ -59,7 +59,7 @@ namespace ReversiLearner
         public async Task<string> FitParams()
         {
             var res = await EvaluateParams();
-            elites = res.OrderBy(x => x.Loses).Take(4).ToList();
+            elites = res.OrderByDescending(x => x.OccupationRate).Take(4).ToList();
             ParamList.Clear();
 
             //エリート2つはそのまま残す
@@ -94,7 +94,7 @@ namespace ReversiLearner
             ParamList.Add(Mutation(cross11));
             ParamList.Add(Mutation(cross12));
 
-            return string.Format("best: {0}\n{1}-{2}-{3}\n",elites[0].Params,elites[0].Wins,elites[0].Loses,elites[0].Draws);
+            return string.Format("best: {0}\n{1}-{2}-{3}\r\n占有率: {4}%",elites[0].Params,elites[0].Wins,elites[0].Loses,elites[0].Draws,elites[0].OccupationRate);
         }
 
         #region GAによる個体生成
@@ -168,6 +168,8 @@ namespace ReversiLearner
                 var senteWin = 0;
                 var senteLose = 0;
                 var senteDraw = 0;
+                var myStones = 0;
+                var oppositeStones = 0;
                 var senteList = new List<Match>();
                 for (int i = 0; i < Count; i++)
                 {
@@ -178,6 +180,8 @@ namespace ReversiLearner
                 Parallel.ForEach(senteList, match =>
                 {
                     var res = match.Execute();
+                    myStones += match.SenteStones;
+                    oppositeStones += match.GoteStones;
                     switch (res)
                     {
                         case Reversi.Core.MatchResult.Draw:
@@ -209,6 +213,8 @@ namespace ReversiLearner
                 Parallel.ForEach(senteList, match =>
                 {
                     var res = match.Execute();
+                    myStones += match.GoteStones;
+                    oppositeStones += match.SenteStones;
                     switch (res)
                     {
                         case Reversi.Core.MatchResult.Draw:
@@ -228,8 +234,9 @@ namespace ReversiLearner
                 });
                 Console.WriteLine("後手: {0}-{1}-{2}", goteWin, goteLose, goteDraw);
                 Console.WriteLine("合計: {0}-{1}-{2}", senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw);
+                Console.WriteLine("占有率: {0}%", myStones * 100 / (myStones + oppositeStones));
                 Console.WriteLine("--------------");
-                return new Score(paramsString, senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw);
+                return new Score(paramsString, senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw,myStones*100/(myStones+oppositeStones));
             });
             
         }

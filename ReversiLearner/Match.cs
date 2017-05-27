@@ -23,6 +23,8 @@ namespace ReversiLearner
         StoneType currentPlayer;
         IThinkingEngine senteEngine;
         IThinkingEngine goteEngine;
+        public int SenteStones { get; private set; }
+        public int GoteStones { get; private set; }
         public MatchResult Winner { get; private set; }
         private void Init()
         {
@@ -52,6 +54,8 @@ namespace ReversiLearner
                     {
                         if (previouslyPassed)
                         {
+                            SenteStones = board.NumOfBlack();
+                            GoteStones = board.NumOfWhite();
                             if (board.NumOfBlack() > board.NumOfWhite())
                             {
                                 Winner = MatchResult.Sente;
@@ -88,6 +92,8 @@ namespace ReversiLearner
                     {
                         if (previouslyPassed)
                         {
+                            SenteStones = board.NumOfBlack();
+                            GoteStones = board.NumOfWhite();
                             if (board.NumOfBlack() > board.NumOfWhite())
                             {
                                 Winner = MatchResult.Sente;
@@ -111,6 +117,8 @@ namespace ReversiLearner
                     }
                 }
             }
+            SenteStones = board.NumOfBlack();
+            GoteStones = board.NumOfWhite();
             if (board.NumOfBlack() > board.NumOfWhite())
             {
                 Winner = MatchResult.Sente;

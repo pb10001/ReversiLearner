@@ -91,5 +91,10 @@ namespace ReversiLearner
             });
 
         }
+
+        public int GetEval()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
