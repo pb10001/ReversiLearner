@@ -210,7 +210,7 @@ namespace ReversiLearner
                     match.GoteThinking();
                     goteList.Add(match);
                 }
-                Parallel.ForEach(senteList, match =>
+                Parallel.ForEach(goteList, match =>
                 {
                     var res = match.Execute();
                     myStones += match.GoteStones;
@@ -221,10 +221,10 @@ namespace ReversiLearner
                             goteDraw++;
                             break;
                         case Reversi.Core.MatchResult.Sente:
-                            goteWin++;
+                            goteLose++;
                             break;
                         case Reversi.Core.MatchResult.Gote:
-                            goteLose++;
+                            goteWin++;
                             break;
                         case Reversi.Core.MatchResult.NotYet:
                             break;

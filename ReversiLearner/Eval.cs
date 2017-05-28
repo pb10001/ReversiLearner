@@ -34,17 +34,7 @@ namespace ReversiLearner
             }
             return res;
         }
-        private int[,] evalBoard = new int[8, 8]
-        {
-        {20, 1, 3, 2, 2, 3, 1,20},
-        { 1,-1,-1,-1,-1,-1,-1, 1},
-        { 3,-1, 1, 1, 1, 1,-1, 3},
-        { 2,-1, 1, 1, 1, 1,-1, 2},
-        { 2,-1, 1, 1, 1, 1,-1, 2},
-        { 3,-1, 1, 1, 1, 1,-1, 3},
-        { 1,-1,-1,-1,-1,-1,-1, 1},
-        {20, 1, 3, 2, 2, 3, 1,20}
-        };
+        private int[,] evalBoard = new int[8, 8];
         public int Execute(bool[,] black, bool[,] white)
         {
             var blackValue = 0;
