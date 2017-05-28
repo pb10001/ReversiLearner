@@ -66,7 +66,7 @@ namespace ReversiLearner
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await MiniMax(nextBoard, player, 2);
+                    var res = await MiniMax(nextBoard, player, 1);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
