@@ -102,7 +102,40 @@ namespace ReversiLearner
                 }
                 int bestEval = player == StoneType.Sente? int.MaxValue:int.MinValue;
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
-                foreach (var item in board.SearchLegalMoves(nextPlayer))
+                var children = board.SearchLegalMoves(nextPlayer);
+                if (children.Count==0)
+                {
+                    var passed = board.SearchLegalMoves(player);
+                    if (passed.Count == 0)
+                    {
+                        return evaluator.Execute(board.BlackToMat(),board.WhiteToMat());
+                    }
+                    foreach (var item in passed)
+                    {
+                        switch (player)
+                        {
+                            case StoneType.None:
+                                break;
+                            case StoneType.Sente:
+                                var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
+                                if (bestEval < val)
+                                {
+                                    bestEval = val;
+                                }
+                                break;
+                            case StoneType.Gote:
+                                var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
+                                if (-bestEval < -val2)
+                                {
+                                    bestEval = val2;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                foreach (var item in children)
                 {
                     switch (nextPlayer)
                     {

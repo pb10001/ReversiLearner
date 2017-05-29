@@ -234,9 +234,9 @@ namespace ReversiLearner
                 });
                 Console.WriteLine("後手: {0}-{1}-{2}", goteWin, goteLose, goteDraw);
                 Console.WriteLine("合計: {0}-{1}-{2}", senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw);
-                Console.WriteLine("占有率: {0}%", myStones * 100 / (myStones + oppositeStones));
+                Console.WriteLine("占有率: {0}%", myStones * 100.0 / (myStones + oppositeStones));
                 Console.WriteLine("--------------");
-                return new Score(paramsString, senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw,myStones*100/(myStones+oppositeStones));
+                return new Score(paramsString, senteWin + goteWin, senteLose + goteLose, senteDraw + goteDraw,myStones*100.0/(myStones+oppositeStones));
             });
             
         }
