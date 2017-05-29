@@ -66,7 +66,8 @@ namespace ReversiLearner
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await MiniMax(nextBoard, player, 1);
+                    var res = await AlphaBeta(nextBoard, player, 3,-1000,1000);
+                    //var res = await MiniMax(nextBoard, player, 1);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -160,6 +161,85 @@ namespace ReversiLearner
                     }
                 }
                 return bestEval;
+            });
+        }
+
+        private async Task<int> AlphaBeta(ReversiBoard board, StoneType player, int depth, int alpha, int beta)
+        {
+            return await Task.Run(async () =>
+            {
+                if (depth == 0)
+                {
+                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                }
+                var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
+                var children = board.SearchLegalMoves(nextPlayer);
+                #region パス
+                if (children.Count == 0)
+                {
+                    var passed = board.SearchLegalMoves(player);
+                    if (passed.Count == 0)
+                    {
+                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    }
+                    if (player == StoneType.Sente)
+                    {
+                        foreach (var item in children)
+                        {
+                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Sente);
+                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
+                            alpha = alpha > alphabeta ? alpha : alphabeta;
+                            if (alpha >= beta)
+                            {
+                                return beta; //枝刈り
+                            }
+                        }
+                        return alpha;
+                    }
+                    else
+                    {
+                        foreach (var item in children)
+                        {
+                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                            beta = -beta < -alphabeta ? alphabeta : beta;
+                            if (alpha >= beta)
+                            {
+                                return alpha; //枝刈り
+                            }
+                        }
+                        return beta;
+                    }
+                }
+                #endregion
+                if (nextPlayer == StoneType.Sente)
+                {
+                    foreach (var item in children)
+                    {
+                        var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Sente);
+                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
+                        alpha = alpha > alphabeta ? alpha : alphabeta;
+                        if (alpha >= beta)
+                        {
+                            return beta; //枝刈り
+                        }
+                    }
+                    return alpha;
+                }
+                else
+                {
+                    foreach (var item in children)
+                    {
+                        var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                        beta = -beta < -alphabeta ? alphabeta : beta;
+                        if (alpha >= beta)
+                        {
+                            return alpha; //枝刈り
+                        }
+                    }
+                    return beta;
+                }
             });
         }
         public int GetEval()
