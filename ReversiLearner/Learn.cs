@@ -31,7 +31,7 @@ namespace ReversiLearner
             for (int i = 0; i < 20; i++)
             {
                 var list = new List<int>();
-                for (int j = 0; j < 16; j++)
+                for (int j = 0; j < 64; j++)
                 {
                     list.Add(random2.Next(-100, 100));
                 }
@@ -108,7 +108,7 @@ namespace ReversiLearner
         {
             var list1 = params1.Split(',').Select(x => int.Parse(x)).ToList();
             var list2 = new List<int>();
-            for (int j = 0; j < 16; j++)
+            for (int j = 0; j < 64; j++)
             {
                 list2.Add(random1.Next(-MutationWidth, MutationWidth));
             }
@@ -139,14 +139,14 @@ namespace ReversiLearner
         {
             var list1 = params1.Split(',').Select(x => int.Parse(x)).ToList();
             var list2 = params2.Split(',').Select(x => int.Parse(x)).ToList();
-            var splitter = random2.Next(1,14);
+            var splitter = random2.Next(1,62);
             var list1Former = new List<int>();
             var list2Latter = new List<int>();
             for (int i = 0; i < splitter; i++)
             {
                 list1Former.Add(list1[i]);
             }
-            for (int i = splitter; i < 16; i++)
+            for (int i = splitter; i < 64; i++)
             {
                 list2Latter.Add(list2[i]);
             }

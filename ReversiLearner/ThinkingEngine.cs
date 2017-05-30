@@ -8,14 +8,14 @@ using ThinkingEngineBase;
 
 namespace ReversiLearner
 {
-    public class ThinkingEngine:IThinkingEngine
+    public class ThinkingEngine : IThinkingEngine
     {
         Eval evaluator;
         public Eval Evaluator
         {
             set
             {
-                if (evaluator==default(Eval))
+                if (evaluator == default(Eval))
                 {
                     evaluator = value;
                 }
@@ -32,7 +32,7 @@ namespace ReversiLearner
         {
             get
             {
-                throw new NotImplementedException();
+                return "Minmax";
             }
         }
 
@@ -42,9 +42,7 @@ namespace ReversiLearner
         }
         Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
         //探索の深さ
-        int depth = 5;
-        //探索の広さ
-        int breadth = 6;
+        const int depth = 1;
         StoneType currentPlayer;
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す
@@ -66,8 +64,7 @@ namespace ReversiLearner
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await AlphaBeta(nextBoard, player, 3,-1000,1000);
-                    //var res = await MiniMax(nextBoard, player, 1);
+                    var res = await AlphaBeta(nextBoard, player, depth, int.MinValue, int.MaxValue);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -99,24 +96,22 @@ namespace ReversiLearner
             {
                 if (depth == 0)
                 {
-                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    return evaluator.Execute(board);
                 }
-                int bestEval = player == StoneType.Sente? int.MaxValue:int.MinValue;
+                int bestEval = player == StoneType.Sente ? int.MaxValue : int.MinValue;
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
                 var children = board.SearchLegalMoves(nextPlayer);
-                if (children.Count==0)
+                if (children.Count == 0)
                 {
                     var passed = board.SearchLegalMoves(player);
                     if (passed.Count == 0)
                     {
-                        return evaluator.Execute(board.BlackToMat(),board.WhiteToMat());
+                        return evaluator.Execute(board);
                     }
                     foreach (var item in passed)
                     {
                         switch (player)
                         {
-                            case StoneType.None:
-                                break;
                             case StoneType.Sente:
                                 var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
                                 if (bestEval < val)
@@ -170,7 +165,7 @@ namespace ReversiLearner
             {
                 if (depth == 0)
                 {
-                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    return evaluator.Execute(board);
                 }
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
                 var children = board.SearchLegalMoves(nextPlayer);
@@ -180,13 +175,13 @@ namespace ReversiLearner
                     var passed = board.SearchLegalMoves(player);
                     if (passed.Count == 0)
                     {
-                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                        return evaluator.Execute(board);
                     }
-                    if (player == StoneType.Sente)
+                    if (nextPlayer == StoneType.Sente)
                     {
                         foreach (var item in children)
                         {
-                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Sente);
+                            var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
                             alpha = alpha > alphabeta ? alpha : alphabeta;
                             if (alpha >= beta)
@@ -200,9 +195,9 @@ namespace ReversiLearner
                     {
                         foreach (var item in children)
                         {
-                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                            var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
-                            beta = -beta < -alphabeta ? alphabeta : beta;
+                            beta = beta > alphabeta ? alphabeta : beta;
                             if (alpha >= beta)
                             {
                                 return alpha; //枝刈り
@@ -232,7 +227,7 @@ namespace ReversiLearner
                     {
                         var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
                         var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
-                        beta = -beta < -alphabeta ? alphabeta : beta;
+                        beta = beta > alphabeta ? alphabeta : beta;
                         if (alpha >= beta)
                         {
                             return alpha; //枝刈り
@@ -244,7 +239,8 @@ namespace ReversiLearner
         }
         public int GetEval()
         {
-            throw new NotImplementedException();
+            return best;
         }
     }
+
 }
