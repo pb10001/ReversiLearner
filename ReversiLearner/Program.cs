@@ -9,6 +9,7 @@ namespace ReversiLearner
 {
     class Program
     {
+        static readonly string paramsPath = @"ParamsData.csv";
         static void Main(string[] args)
         {
             //var array = File.ReadAllText(@"ParamsData.txt").Split('\n');
@@ -18,14 +19,14 @@ namespace ReversiLearner
             var width = int.Parse(Console.ReadLine().Replace(" ",""));
             Console.Write("input the number of epocs: ");
             var epocs = int.Parse(Console.ReadLine().Replace(" ",""));
-            var learner = new Learn(match,width,@"ParamsData.txt");
+            var learner = new Learn(match,width,paramsPath);
             //learner.InitParams();
             for (int i = 0; i < epocs; i++)
             {
                 var text  = learner.FitParams().Result;
                 Console.WriteLine("epoc "+i.ToString() + "::" + text);
             }
-            File.WriteAllText(@"ParamsData.txt", string.Join("\r\n", learner.ParamList));
+            File.WriteAllText(paramsPath, string.Join("\r\n", learner.ParamList));
         }
 
     }

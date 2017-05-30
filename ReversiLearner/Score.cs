@@ -14,15 +14,15 @@ namespace ReversiLearner
             Wins = wins;
             Loses = loses;
             Draws = draws;
-            OccupationRate = occRate;
+            WorstOccupationRate = occRate;
         }
         public string Params { get; }
         public int Wins { get; }
         public int Loses { get; }
         public int Draws { get; }
         /// <summary>
-        /// 石の占有率
+        /// 石の占有率のうち、最も低かったもの
         /// </summary>
-        public double OccupationRate { get; }
+        public double WorstOccupationRate { get; }
     }
 }
