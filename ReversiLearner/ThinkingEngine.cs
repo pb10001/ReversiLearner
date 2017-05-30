@@ -175,7 +175,21 @@ namespace ReversiLearner
                     var passed = board.SearchLegalMoves(player);
                     if (passed.Count == 0)
                     {
-                        return evaluator.Execute(board);
+                        //終了なので、勝敗を判定
+                        var bl = board.NumOfBlack();
+                        var wh = board.NumOfWhite();
+                        if (bl>wh)
+                        {
+                            return int.MaxValue; //先手勝ち
+                        }
+                        else if (bl<wh)
+                        {
+                            return int.MinValue; //後手勝ち
+                        }
+                        else
+                        {
+                            return 0; //引き分け
+                        }
                     }
                     if (nextPlayer == StoneType.Sente)
                     {
