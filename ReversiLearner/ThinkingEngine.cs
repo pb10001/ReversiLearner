@@ -85,81 +85,6 @@ namespace ReversiLearner
         }
 
         int best = 0;
-        /// <summary>
-        /// ミニマックス法
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="player"></param>
-        /// <param name="depth"></param>
-        /// <returns></returns>
-        public async Task<int> MiniMax(ReversiBoard board, StoneType player, int depth)
-        {
-            return await Task.Run(async () =>
-            {
-                if (depth == 0)
-                {
-                    return evaluator.Execute(board);
-                }
-                int bestEval = player == StoneType.Sente ? int.MaxValue : int.MinValue;
-                var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
-                var children = board.SearchLegalMoves(nextPlayer);
-                if (children.Count == 0)
-                {
-                    var passed = board.SearchLegalMoves(player);
-                    if (passed.Count == 0)
-                    {
-                        return evaluator.Execute(board);
-                    }
-                    foreach (var item in passed)
-                    {
-                        switch (player)
-                        {
-                            case StoneType.Sente:
-                                var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
-                                if (bestEval < val)
-                                {
-                                    bestEval = val;
-                                }
-                                break;
-                            case StoneType.Gote:
-                                var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
-                                if (-bestEval < -val2)
-                                {
-                                    bestEval = val2;
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                foreach (var item in children)
-                {
-                    switch (nextPlayer)
-                    {
-                        case StoneType.None:
-                            break;
-                        case StoneType.Sente:
-                            var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
-                            if (bestEval < val)
-                            {
-                                bestEval = val;
-                            }
-                            break;
-                        case StoneType.Gote:
-                            var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
-                            if (-bestEval < -val2)
-                            {
-                                bestEval = val2;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return bestEval;
-            });
-        }
 
         private async Task<int> AlphaBeta(ReversiBoard board, StoneType player, int depth, int alpha, int beta)
         {
@@ -195,29 +120,23 @@ namespace ReversiLearner
                     }
                     if (nextPlayer == StoneType.Sente)
                     {
-                        foreach (var item in children)
+                        var nextBoard = board.Pass();
+                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
+                        alpha = alpha > alphabeta ? alpha : alphabeta;
+                        if (alpha >= beta)
                         {
-                            var nextBoard = board.Pass();
-                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
-                            alpha = alpha > alphabeta ? alpha : alphabeta;
-                            if (alpha >= beta)
-                            {
-                                return beta; //枝刈り
-                            }
+                            return beta; //枝刈り
                         }
                         return alpha;
                     }
                     else
                     {
-                        foreach (var item in children)
+                        var nextBoard = board.Pass();
+                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                        beta = beta > alphabeta ? alphabeta : beta;
+                        if (alpha >= beta)
                         {
-                            var nextBoard = board.Pass();
-                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
-                            beta = beta > alphabeta ? alphabeta : beta;
-                            if (alpha >= beta)
-                            {
-                                return alpha; //枝刈り
-                            }
+                            return alpha; //枝刈り
                         }
                         return beta;
                     }
