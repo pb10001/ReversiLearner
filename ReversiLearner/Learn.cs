@@ -59,7 +59,7 @@ namespace ReversiLearner
         public async Task<string> FitParams()
         {
             var res = await EvaluateParams();
-            elites = res.OrderByDescending(x => x.WorstOccupationRate).Take(4).ToList();
+            elites = res.OrderBy(x => x.Loses).Take(4).ToList();
             ParamList.Clear();
 
             //エリート2つはそのまま残す
