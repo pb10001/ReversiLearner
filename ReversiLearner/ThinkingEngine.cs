@@ -25,6 +25,8 @@ namespace ReversiLearner
                 }
             }
         }
+        //思考時間の制限
+        int timeLimit;
         //合法手のリスト
         List<ReversiMove> legalMoves = new List<ReversiMove>();
 
@@ -38,7 +40,7 @@ namespace ReversiLearner
 
         public void SetTimeLimit(int milliSecond)
         {
-            throw new NotImplementedException();
+            timeLimit = milliSecond;
         }
         Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
         //探索の深さ
