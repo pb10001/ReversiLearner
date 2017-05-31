@@ -38,7 +38,7 @@
       <HintPath>..\..\Reversi\binary\engines\RandomEngine.dll</HintPath>
     </Reference>
     <Reference Include="Reversi.Core">
-      <HintPath>..\..\..\..\Documents\GitHub\Reversi-App\binary\Reversi.Core.dll</HintPath>
+      <HintPath>..\..\..\..\Source\Repos\Reversi-App\binary\Reversi.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

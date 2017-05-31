@@ -182,7 +182,7 @@ namespace ReversiLearner
                     var myStones = match.SenteStones;
                     var oppositeStones = match.GoteStones;
                     var occupation = myStones * 100.0 / (myStones + oppositeStones);
-                    worstOccupation = worstOccupation < occupation? worstOccupation:occupation;
+                    worstOccupation = worstOccupation < occupation ? worstOccupation : occupation;
                     switch (res)
                     {
                         case Reversi.Core.MatchResult.Draw:
